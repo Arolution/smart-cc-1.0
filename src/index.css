@@ -1,3 +1,6 @@
+/* Premium Effects for Compound Interest Visualizations */
+@import './styles/premium-effects.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
