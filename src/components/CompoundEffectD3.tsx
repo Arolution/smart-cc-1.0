@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { motion } from 'framer-motion';
 import * as d3 from 'd3';
 import { YearlyResult } from '@/utils/calculatorEngine';
 
@@ -19,16 +19,19 @@ const CompoundEffectD3 = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const [animatedDifference, setAnimatedDifference] = useState(0);
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState<{
     x: number;
     y: number;
     value: number;
     label: string;
   } | null>(null);
-  const controls = useAnimation();
 
-  // Animate counter with morphing effect
+  // Animate counter with morphing effect (run only once)
   useEffect(() => {
+    if (hasAnimated) return;
+    
+    setHasAnimated(true);
     const duration = 1000;
     const steps = 60;
     let currentStep = 0;
@@ -52,7 +55,7 @@ const CompoundEffectD3 = ({
     }, duration / steps);
 
     return () => clearInterval(interval);
-  }, [difference, percentageGain]);
+  }, []); // Only run once on mount
 
   // Prepare data and draw D3 chart
   const chartData = useMemo(() => {

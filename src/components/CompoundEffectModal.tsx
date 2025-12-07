@@ -33,7 +33,7 @@ const CompoundEffectModal = ({
   const comparisonData = calculateLinearComparison(params);
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('de-DE', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
