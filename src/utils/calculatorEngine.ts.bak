@@ -1,0 +1,40 @@
+﻿/* Minimaler placeholder für calculateCompound + exportierte Typen.
+   Ziel: verhindert den Self‑import / fehlende Export‑Fehler beim Build.
+   Implementiere die Logik später vollständig — dieser Stub sorgt erstmal dafür,
+   dass der Bundler ein gültiges Modul findet. */
+
+export type Partner = {
+  id?: string;
+  name?: string;
+  // weitere Felder nach Bedarf
+};
+
+export type TransactionPlan = any;
+
+export type YearlyResult = {
+  year: number;
+  months: { month: number; days: any[] }[];
+  summary: { startStake: number; endStake: number; totalProfit: number };
+};
+
+export type CalculationParams = {
+  initialStake: number;
+  durationYears: number;
+  durationMonths: number;
+  partners: Partner[];
+  deposits: TransactionPlan[];
+  withdrawals: TransactionPlan[];
+  startDate: string;
+};
+
+/**
+ * Minimaler calculateCompound-Stub.
+ * Ersetzt den fehlenden Export; gibst du später eine echte Implementation, tauschst du hier aus.
+ */
+export function calculateCompound(_params: CalculationParams): YearlyResult[] {
+  // placeholder: gib ein leeres Ergebnis-Array zurück, damit Komponenten nicht crashen
+  return [];
+}
+
+// Export default (nur falls irgendwo default importiert wird)
+export default calculateCompound;

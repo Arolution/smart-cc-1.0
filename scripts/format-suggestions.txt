@@ -1,0 +1,10 @@
+Anleitung / Vorschläge zur Fehlerbehebung (kurz)
+- Falls Import './foo' fehlt, prüfe ob src/.../foo.ts(x) oder src/.../foo/index.ts(x) existiert.
+- Konvertiere inkonsistente Importe:
+  - In Windows/ESM-Setups kann ein Import '../config' ohne index.ts Probleme machen — verwende './config' + index.ts oder explizit './config/defaults'.
+- Wenn dein Projekt tsconfig paths oder Vite-Alias (z.B. @/utils) nutzt, dann stelle sicher, dass diese in vite.config.ts und tsconfig.json konsistent sind.
+- Commands zum Debuggen:
+  - npx tsc --noEmit
+  - npx ts-node ./scripts/validate-imports.ts
+  - rm -rf node_modules/.vite (Windows PowerShell: Remove-Item -Recurse -Force .\node_modules\.vite\)
+  - npm run build

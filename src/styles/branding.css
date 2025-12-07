@@ -1,0 +1,33 @@
+/* Branding colors
+   Setze hier den Goldton deines Logos.
+   Beispiel-Hex wurde auf deinen Wert gesetzt: #cd9a37
+   Importiere diese Datei in deinen globalen CSS (z. B. index.css / globals.css)
+   oder definiere die Variable an zentraler Stelle (:root).
+*/
+
+:root {
+  --brand-gold: #cd9a37;
+}
+
+/* Optional: gleiche Variable speziell für dark mode (wenn ihr eine .dark Klasse verwendet) */
+.dark {
+  --brand-gold: #cd9a37;
+}
+
+/* Optional: kleine Hilfsklassen wenn du kein Tailwind benutzt */
+.icon-btn {
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--brand-gold);
+  border-radius: 6px;
+  background: white;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 120ms ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.icon-btn:hover {
+  transform: scale(1.05);
+}
