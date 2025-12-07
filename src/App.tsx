@@ -9,6 +9,7 @@ import Landing from "./pages/Landing";
 import Welcome from "./pages/Welcome";
 import Disclaimer from "./pages/Disclaimer";
 import Calculator from "./pages/Calculator";
+import PremiumDemo from "./pages/PremiumDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/calculator" element={<Calculator />} />
+            <Route path="/premium-demo" element={<PremiumDemo />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
