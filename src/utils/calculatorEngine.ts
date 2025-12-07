@@ -183,7 +183,7 @@ function isVacationPeriod(date: Date): boolean {
     const christmas = new Date(y, 11, 25);
     const christmasStart = getMondayBeforeDate(christmas);
     const christmasEnd = new Date(christmasStart);
-    christmasEnd.setDate(christmasEnd.getDate() + 13);
+    christmasEnd.setDate(christmasEnd.getDate() + 14);
     
     if (date >= christmasStart && date <= christmasEnd) {
       return true;
