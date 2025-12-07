@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, FileText, Download, Upload } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileText, Download, Upload, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { de, enUS } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import RealDataUpload from './RealDataUpload';
+import CompoundEffectModal from '@/components/CompoundEffectModal';
 import logo from '@/assets/logo.png';
 
 interface CalculatorResultsProps {
@@ -30,6 +31,7 @@ const CalculatorResults = ({ results, params, onRecalculateWithRealData }: Calcu
   const [exportGranularity, setExportGranularity] = useState<'yearly' | 'monthly' | 'weekly' | 'daily'>('monthly');
   const [simulationName, setSimulationName] = useState('');
   const [realProfitData, setRealProfitData] = useState<RealProfitData[]>([]);
+  const [compoundEffectModalOpen, setCompoundEffectModalOpen] = useState(false);
 
   const isGerman = i18n.language === 'de';
   const dateLocale = isGerman ? de : enUS;
@@ -436,6 +438,34 @@ const CalculatorResults = ({ results, params, onRecalculateWithRealData }: Calcu
           </div>
         </CardContent>
       </Card>
+
+      {/* Compound Effect Visualization Toggle Button */}
+      {params && (
+        <Card className="metallic-frame border-gold/30">
+          <CardContent className="pt-6">
+            <Button
+              onClick={() => setCompoundEffectModalOpen(true)}
+              className="w-full bg-gradient-to-r from-gold via-gold-dark to-gold hover:shadow-lg hover:shadow-gold/50 text-lg py-6"
+            >
+              <Sparkles className="mr-2" size={20} />
+              💫 Zinseszins-Effekt anzeigen
+            </Button>
+            <p className="text-center text-sm text-muted-foreground mt-3">
+              Entdecken Sie den Unterschied zwischen Compound Interest und linearem Wachstum
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Compound Effect Modal */}
+      {params && (
+        <CompoundEffectModal
+          open={compoundEffectModalOpen}
+          onOpenChange={setCompoundEffectModalOpen}
+          results={results}
+          params={params}
+        />
+      )}
 
       {/* Detailed Results Table */}
       <Card className="metallic-frame">
