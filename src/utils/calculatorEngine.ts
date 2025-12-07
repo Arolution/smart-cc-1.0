@@ -570,3 +570,151 @@ export function calculateCompound(params: CalculationParams): YearlyResult[] {
   
   return yearlyResults;
 }
+
+// Calculate linear comparison (profits not reinvested)
+export function calculateLinearComparison(
+  params: CalculationParams
+): {
+  compoundResults: YearlyResult[];
+  linearResults: YearlyResult[];
+  comparison: {
+    totalCompoundProfit: number;
+    totalLinearProfit: number;
+    difference: number;
+    percentageGain: number;
+  };
+} {
+  // First calculate compound results (with reinvestment)
+  const compoundResults = calculateCompound(params);
+  
+  // Now calculate linear results (profits NOT reinvested)
+  const startDate = params.startDate || new Date();
+  const endDate = new Date(startDate);
+  endDate.setFullYear(endDate.getFullYear() + params.durationYears);
+  endDate.setMonth(endDate.getMonth() + params.durationMonths);
+  
+  const restakingDays = params.restakingDays && params.restakingDays.length > 0 
+    ? params.restakingDays 
+    : [1, 2, 3, 4, 5];
+  
+  let currentStake = params.initialStake; // Stake stays constant in linear
+  let accumulatedProfit = 0; // Profits are set aside
+  const linearYearlyResults: YearlyResult[] = [];
+  
+  let currentDate = new Date(startDate);
+  const linearDailyResults: DailyResult[] = [];
+  
+  while (currentDate <= endDate) {
+    const isWeekendDay = isWeekend(currentDate);
+    const isVacationDay = isVacationPeriod(currentDate);
+    
+    let dayProfit = 0;
+    
+    // Calculate daily profit if working day - but only on initial stake
+    if (isWorkingDay(currentDate, restakingDays)) {
+      const dailyProfitRate = getDailyProfitRate(currentDate, params.realProfitData);
+      const dailyGrossProfit = currentStake * dailyProfitRate;
+      const profitShare = getProfitShare(currentStake);
+      dayProfit = dailyGrossProfit * profitShare;
+      
+      // Profit is set aside, not reinvested
+      accumulatedProfit += dayProfit;
+    }
+    
+    linearDailyResults.push({
+      date: new Date(currentDate),
+      stake: currentStake,
+      profit: dayProfit,
+      partnerCommissions: [], // Simplified - no partner commissions in linear comparison
+      deposit: 0,
+      withdrawal: 0,
+      withdrawalFee: 0,
+      newStake: currentStake, // Stake doesn't change
+      isWeekend: isWeekendDay,
+      isVacation: isVacationDay,
+    });
+    
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+  
+  // Group linear results by year and month (same structure as compound)
+  const linearGroupedByYear = new Map<number, Map<number, DailyResult[]>>();
+  
+  for (const day of linearDailyResults) {
+    const year = day.date.getFullYear();
+    const month = day.date.getMonth();
+    
+    if (!linearGroupedByYear.has(year)) {
+      linearGroupedByYear.set(year, new Map());
+    }
+    
+    const yearMap = linearGroupedByYear.get(year)!;
+    if (!yearMap.has(month)) {
+      yearMap.set(month, []);
+    }
+    
+    yearMap.get(month)!.push(day);
+  }
+  
+  // Create yearly results for linear
+  for (const [year, monthsMap] of linearGroupedByYear) {
+    const months: MonthlyResult[] = [];
+    let yearStartStake = 0;
+    let yearEndStake = 0;
+    let yearTotalProfit = 0;
+    
+    for (const [month, days] of monthsMap) {
+      const monthStartStake = days[0].stake;
+      const monthEndStake = days[days.length - 1].newStake;
+      const monthTotalProfit = days.reduce((sum, d) => sum + d.profit, 0);
+      
+      if (months.length === 0) yearStartStake = monthStartStake;
+      yearEndStake = monthEndStake;
+      yearTotalProfit += monthTotalProfit;
+      
+      months.push({
+        year,
+        month,
+        days,
+        summary: {
+          startStake: monthStartStake,
+          endStake: monthEndStake,
+          totalProfit: monthTotalProfit,
+          partnerSummaries: [],
+          totalDeposits: 0,
+          totalWithdrawals: 0,
+        },
+      });
+    }
+    
+    linearYearlyResults.push({
+      year,
+      months,
+      summary: {
+        startStake: yearStartStake,
+        endStake: yearEndStake,
+        totalProfit: yearTotalProfit,
+        partnerSummaries: [],
+        totalDeposits: 0,
+        totalWithdrawals: 0,
+      },
+    });
+  }
+  
+  // Calculate comparison metrics
+  const totalCompoundProfit = compoundResults.reduce((sum, y) => sum + y.summary.totalProfit, 0);
+  const totalLinearProfit = accumulatedProfit;
+  const difference = totalCompoundProfit - totalLinearProfit;
+  const percentageGain = totalLinearProfit > 0 ? (difference / totalLinearProfit) * 100 : 0;
+  
+  return {
+    compoundResults,
+    linearResults: linearYearlyResults,
+    comparison: {
+      totalCompoundProfit,
+      totalLinearProfit,
+      difference,
+      percentageGain,
+    },
+  };
+}
