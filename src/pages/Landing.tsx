@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/contexts/ThemeContext';
 import logo from '@/assets/logo.png';
@@ -45,10 +45,23 @@ const Landing = () => {
           </div>
 
           {/* CTA Button */}
-          <div className="pt-8 animate-in slide-in-from-bottom duration-700 delay-200">
+          <div className="pt-8 animate-in slide-in-from-bottom duration-700 delay-200 space-y-4">
             <Button size="lg" onClick={() => navigate('/welcome')} className="bg-gradient-to-r from-gold via-gold-dark to-gold hover:shadow-lg hover:shadow-gold/50 transition-all duration-300 text-lg px-8 py-6 font-semibold">
               Jetzt starten
             </Button>
+            
+            <div>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                onClick={() => navigate('/premium-demo')}
+                className="group relative overflow-hidden"
+              >
+                <Sparkles className="mr-2 h-5 w-5 text-primary group-hover:animate-pulse" />
+                <span>{i18n.language === 'de' ? 'Premium Visualisierungen' : 'Premium Visualizations'}</span>
+                <span className="premium-badge ml-2">WOW</span>
+              </Button>
+            </div>
           </div>
         </div>
       </main>
