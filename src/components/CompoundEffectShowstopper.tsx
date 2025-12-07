@@ -12,6 +12,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useSpring, animated } from '@react-spring/web';
 import confetti from 'canvas-confetti';
+import { formatCurrency } from '@/utils/formatters';
 import '../styles/premium-effects.css';
 
 interface CompoundEffectShowstopperProps {
@@ -36,7 +37,7 @@ const AnimatedNumber: React.FC<{ value: number }> = ({ value }) => {
 
   return (
     <animated.span className="number-morph">
-      {number.to((n) => `$${n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`)}
+      {number.to((n) => formatCurrency(n))}
     </animated.span>
   );
 };

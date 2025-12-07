@@ -12,7 +12,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Liquid } from '@ant-design/plots';
 import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
+import { loadSlim } from 'tsparticles-slim';
 import type { Engine } from 'tsparticles-engine';
 import '../styles/premium-effects.css';
 
@@ -92,7 +92,7 @@ export const CompoundEffectElegant: React.FC<CompoundEffectElegantProps> = ({
   const advantagePercent = finalCompound > 0 ? (difference / finalCompound) * 100 : 0;
 
   const particlesInit = async (engine: Engine) => {
-    await loadFull(engine);
+    await loadSlim(engine);
   };
 
   const liquidConfig = {
