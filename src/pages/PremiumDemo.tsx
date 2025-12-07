@@ -10,13 +10,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft, Sparkles, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Header from '@/components/Header';
+import { useTheme } from '@/contexts/ThemeContext';
 import CompoundEffectShowstopper from '@/components/CompoundEffectShowstopper';
 import CompoundEffectElegant from '@/components/CompoundEffectElegant';
 import CompoundEffectExplosive from '@/components/CompoundEffectExplosive';
@@ -24,6 +24,7 @@ import CompoundEffectExplosive from '@/components/CompoundEffectExplosive';
 const PremiumDemo = () => {
   const navigate = useNavigate();
   const { i18n } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
   const isGerman = i18n.language === 'de';
 
   // Default values for demonstration
@@ -43,20 +44,53 @@ const PremiumDemo = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* Simple header with controls */}
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {isGerman ? 'Zurück' : 'Back'}
+            </Button>
+          </div>
+          
+          <div className="font-semibold">Compound Calculator</div>
+          
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => i18n.changeLanguage('de')}
+              className={i18n.language === 'de' ? 'bg-accent' : ''}
+            >
+              🇩🇪
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => i18n.changeLanguage('en')}
+              className={i18n.language === 'en' ? 'bg-accent' : ''}
+            >
+              EN
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme}
+            >
+              {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            </Button>
+          </div>
+        </div>
+      </header>
       
       <main className="container mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(-1)}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {isGerman ? 'Zurück' : 'Back'}
-          </Button>
-          
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="h-8 w-8 text-primary" />
             <h1 className="text-4xl font-bold">
