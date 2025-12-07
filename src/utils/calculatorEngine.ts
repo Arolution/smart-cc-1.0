@@ -88,18 +88,42 @@ export interface YearlyResult {
 
 const DEFAULT_MONTHLY_GROSS_PROFIT_RATE = 0.16; // 16% per month
 const WORKING_DAYS_PER_MONTH = 20; // Average
+// Count actual working days (Mon-Fri) in a given month
+function getWorkingDaysInMonth(date: Date): number {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  
+  // Get first and last day of the month
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  
+  let workingDays = 0;
+  const currentDay = new Date(firstDay);
+  
+  while (currentDay <= lastDay) {
+    const dayOfWeek = currentDay. getDay();
+    // Count Monday (1) to Friday (5)
+    if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+      workingDays++;
+    }
+    currentDay.setDate(currentDay.getDate() + 1);
+  }
+  
+  return workingDays;
+}
 
-// Get daily profit rate - use real data if available, otherwise default
+// Get daily profit rate - use real data if available, otherwise default based on actual working days
 function getDailyProfitRate(date: Date, realProfitData?: RealProfitData[]): number {
-  if (realProfitData && realProfitData.length > 0) {
+  if (realProfitData && realProfitData. length > 0) {
     const dateStr = date.toISOString().split('T')[0];
     const realData = realProfitData.find(d => d.date === dateStr);
     if (realData) {
       return realData.grossProfitRate;
     }
   }
-  // Default: 16% monthly / 20 working days
-  return DEFAULT_MONTHLY_GROSS_PROFIT_RATE / WORKING_DAYS_PER_MONTH;
+  // Calculate based on actual working days in the month
+  const workingDaysInMonth = getWorkingDaysInMonth(date);
+  return DEFAULT_MONTHLY_GROSS_PROFIT_RATE / workingDaysInMonth;
 }
 
 // Profit share tiers - CORRECTED thresholds
