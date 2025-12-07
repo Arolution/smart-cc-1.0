@@ -1,4 +1,4 @@
-﻿// Calculator engine for compound interest with complex rules
+﻿﻿// Calculator engine for compound interest with complex rules
 
 export interface Partner {
   id: string;
@@ -130,9 +130,9 @@ function isWeekend(date: Date): boolean {
 // Check if date is a working day (Monday-Friday, not during vacation)
 function isWorkingDay(date: Date, restakingDays?: number[]): boolean {
   const day = date.getDay();
-  if (day === 0 || day === 6) return false; // Weekend
+  if (day === 0 || day === 6) return false; // Weekend  
   
-  if (isVacationPeriod(date)) return false;
+  if (isVacationPeriod(date)) return false;  
   
   // If restaking days specified, check if today is a restaking day
   if (restakingDays && restakingDays.length > 0) {
@@ -278,7 +278,7 @@ export function calculateCompound(params: CalculationParams): YearlyResult[] {
     let dayWithdrawalFee = 0;
     
     // Calculate daily profit if working day and restaking day
-    if (isWorkingDay(currentDate, restakingDays)) {
+    if (isWorkingDay(currentDate, restakingDays) && !isVacationDay) {
       const dailyProfitRate = getDailyProfitRate(currentDate, params.realProfitData);
       const dailyGrossProfit = currentStake * dailyProfitRate;
       const profitShare = getProfitShare(currentStake);
