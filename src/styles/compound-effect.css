@@ -1,18 +1,26 @@
-/* Neon Glow Pulse Animation */
-@keyframes neon-pulse {
-  0%, 100% { 
-    filter: drop-shadow(0 0 4px rgba(218, 165, 32, 0.6)) 
-            drop-shadow(0 0 8px rgba(218, 165, 32, 0.4));
+/* Pulsing Glow Animation for Area between lines */
+@keyframes area-glow-pulse {
+  0%, 100% {
+    opacity: 0.15;
+    filter: drop-shadow(0 0 6px rgba(218, 165, 32, 0.4))
+            drop-shadow(0 0 12px rgba(218, 165, 32, 0.3));
   }
-  50% { 
-    filter: drop-shadow(0 0 8px rgba(218, 165, 32, 0.8)) 
-            drop-shadow(0 0 16px rgba(218, 165, 32, 0.6))
-            drop-shadow(0 0 24px rgba(218, 165, 32, 0.4));
+  50% {
+    opacity: 0.25;
+    filter: drop-shadow(0 0 12px rgba(218, 165, 32, 0.6))
+            drop-shadow(0 0 24px rgba(218, 165, 32, 0.5))
+            drop-shadow(0 0 36px rgba(218, 165, 32, 0.3));
   }
 }
 
+/* Target area paths with gradient fill */
+.compound-chart-wrapper svg path[fill*="url(#gradientGlow)"] {
+  animation: area-glow-pulse var(--area-animation-duration, 3s) ease-in-out infinite;
+}
+
+/* Legacy glow effect - kept for backwards compatibility but disabled */
 .compound-line-glow {
-  animation: neon-pulse 2s ease-in-out infinite;
+  /* Animation removed - now targeting area specifically */
 }
 
 /* Smooth fade-in for stats */
@@ -38,7 +46,7 @@
 
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  .compound-line-glow {
+  .compound-chart-wrapper svg path[fill*="url(#gradientGlow)"] {
     animation: none;
   }
   

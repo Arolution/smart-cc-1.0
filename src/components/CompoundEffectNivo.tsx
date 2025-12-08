@@ -50,6 +50,11 @@ const CompoundEffectNivo = ({
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
     setIsVisible(true);
+    
+    // Set CSS variable for area animation duration based on motion preference
+    if (mediaQuery.matches) {
+      document.documentElement.style.setProperty('--area-animation-duration', '0s');
+    }
   }, []);
 
   // Calculate compound interest data (with reinvestment) - memoized for performance
@@ -172,7 +177,7 @@ const CompoundEffectNivo = ({
           ease: "easeOut"
         }}
         style={{ height: '400px', width: '100%' }}
-        className={prefersReducedMotion ? '' : 'compound-line-glow'}
+        className="compound-chart-wrapper"
       >
         <ResponsiveLine
           data={data}
@@ -218,7 +223,25 @@ const CompoundEffectNivo = ({
           pointBorderColor={{ from: 'serieColor' }}
           pointLabelYOffset={-12}
           enableArea={true}
-          areaOpacity={0.1}
+          areaOpacity={0.15}
+          areaBaselineValue={0}
+          defs={[
+            {
+              id: 'gradientGlow',
+              type: 'linearGradient',
+              colors: [
+                { offset: 0, color: '#daa520', opacity: 0.4 },
+                { offset: 50, color: '#daa520', opacity: 0.2 },
+                { offset: 100, color: '#daa520', opacity: 0.05 },
+              ],
+            },
+          ]}
+          fill={[
+            {
+              match: { id: data[0].id }, // Only for Compound line
+              id: 'gradientGlow',
+            },
+          ]}
           useMesh={true}
           animate={true}
           motionConfig={motionConfig}
