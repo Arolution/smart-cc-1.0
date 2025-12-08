@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronRight, FileText, Download, Upload } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileText, Download, Upload, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import { de, enUS } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import RealDataUpload from './RealDataUpload';
+import CompoundEffectNivo from '../CompoundEffectNivo';
 import logo from '@/assets/logo.png';
 
 interface CalculatorResultsProps {
@@ -30,6 +31,7 @@ const CalculatorResults = ({ results, params, onRecalculateWithRealData }: Calcu
   const [exportGranularity, setExportGranularity] = useState<'yearly' | 'monthly' | 'weekly' | 'daily'>('monthly');
   const [simulationName, setSimulationName] = useState('');
   const [realProfitData, setRealProfitData] = useState<RealProfitData[]>([]);
+  const [showCompoundEffect, setShowCompoundEffect] = useState(false);
 
   const isGerman = i18n.language === 'de';
   const dateLocale = isGerman ? de : enUS;
@@ -436,6 +438,51 @@ const CalculatorResults = ({ results, params, onRecalculateWithRealData }: Calcu
           </div>
         </CardContent>
       </Card>
+
+      {/* Zinseszins-Effekt Button & Visualisierung */}
+      {params && (
+        <>
+          <div className="flex justify-center">
+            <Button 
+              onClick={() => setShowCompoundEffect(!showCompoundEffect)}
+              className="w-full bg-gradient-to-r from-gold via-gold-dark to-gold hover:shadow-lg hover:shadow-gold/50 border border-gold/30"
+              size="lg"
+            >
+              <Sparkles className="mr-2" size={20} />
+              {showCompoundEffect ? (isGerman ? 'Zinseszins-Effekt ausblenden' : 'Hide Compound Interest Effect') : '💫 ' + (isGerman ? 'Zinseszins-Effekt anzeigen' : 'Show Compound Interest Effect')}
+            </Button>
+          </div>
+
+          {showCompoundEffect && (
+            <Card className="metallic-frame border-gold/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="text-gold" size={20} />
+                  {isGerman ? 'Zinseszins-Effekt Visualisierung' : 'Compound Interest Effect Visualization'}
+                </CardTitle>
+                <CardDescription>
+                  {isGerman 
+                    ? 'Vergleich: Mit Reinvestition vs. Ohne Reinvestition' 
+                    : 'Comparison: With Reinvestment vs. Without Reinvestment'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <CompoundEffectNivo
+                  principal={params.initialStake}
+                  rate={
+                    // Calculate CAGR (Compound Annual Growth Rate) from results
+                    results.length > 0 && params.initialStake > 0 && results[results.length - 1].summary.endStake > 0
+                      ? ((results[results.length - 1].summary.endStake / params.initialStake) ** (1 / results.length) - 1) * 100
+                      : 10 // Default 10% annual return if unable to calculate
+                  }
+                  years={results.length > 0 ? results.length : 10}
+                  monthlyContribution={0}
+                />
+              </CardContent>
+            </Card>
+          )}
+        </>
+      )}
 
       {/* Detailed Results Table */}
       <Card className="metallic-frame">
