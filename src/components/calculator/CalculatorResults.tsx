@@ -470,12 +470,12 @@ const CalculatorResults = ({ results, params, onRecalculateWithRealData }: Calcu
                 <CompoundEffectNivo
                   principal={params.initialStake}
                   rate={
-                    // Calculate average annual return rate from results
-                    results.length > 0 && params.initialStake > 0
+                    // Calculate CAGR (Compound Annual Growth Rate) from results
+                    results.length > 0 && params.initialStake > 0 && results[results.length - 1].summary.endStake > 0
                       ? ((results[results.length - 1].summary.endStake / params.initialStake) ** (1 / results.length) - 1) * 100
-                      : 10 // Default 10% if unable to calculate
+                      : 10 // Default 10% annual return if unable to calculate
                   }
-                  years={results.length}
+                  years={results.length > 0 ? results.length : 10}
                   monthlyContribution={0}
                 />
               </CardContent>

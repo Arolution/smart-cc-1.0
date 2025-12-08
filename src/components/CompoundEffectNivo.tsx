@@ -160,9 +160,10 @@ const CompoundEffectNivo = ({
         tooltip={({ point }) => (
           <div
             style={{
-              background: 'white',
+              background: 'var(--card)',
+              color: 'var(--card-foreground)',
               padding: '9px 12px',
-              border: '1px solid #ccc',
+              border: '1px solid var(--border)',
               borderRadius: '4px',
             }}
           >
