@@ -15,11 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTheme } from '@/contexts/ThemeContext';
-import CompoundEffectShowstopper from '@/components/CompoundEffectShowstopper';
-import CompoundEffectElegant from '@/components/CompoundEffectElegant';
-import CompoundEffectExplosive from '@/components/CompoundEffectExplosive';
+import CompoundEffectNivo from '@/components/CompoundEffectNivo';
 
 const PremiumDemo = () => {
   const navigate = useNavigate();
@@ -32,7 +29,6 @@ const PremiumDemo = () => {
   const [rate, setRate] = useState(7);
   const [years, setYears] = useState(30);
   const [monthlyContribution, setMonthlyContribution] = useState(500);
-  const [activeTab, setActiveTab] = useState('showstopper');
 
   const handleInputChange = (setter: React.Dispatch<React.SetStateAction<number>>) => 
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,14 +90,14 @@ const PremiumDemo = () => {
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="h-8 w-8 text-primary" />
             <h1 className="text-4xl font-bold">
-              {isGerman ? 'Premium Visualisierungen' : 'Premium Visualizations'}
+              {isGerman ? 'Zinseszins Visualisierung' : 'Compound Interest Visualization'}
             </h1>
           </div>
           
           <p className="text-muted-foreground text-lg max-w-3xl">
             {isGerman 
-              ? 'Erleben Sie die Kraft des Zinseszins-Effekts mit drei spektakulären Visualisierungsvarianten. Jede Variante verwendet unterschiedliche Premium-Effekte, um den dramatischen Unterschied zwischen linearem und exponentiellem Wachstum zu verdeutlichen.'
-              : 'Experience the power of compound interest with three spectacular visualization variants. Each variant uses different premium effects to illustrate the dramatic difference between linear and exponential growth.'}
+              ? 'Erleben Sie die Kraft des Zinseszins-Effekts mit einer klaren und eleganten Visualisierung. Die Nivo-Chart zeigt deutlich den dramatischen Unterschied zwischen linearem und exponentiellem Wachstum.'
+              : 'Experience the power of compound interest with a clear and elegant visualization. The Nivo chart clearly shows the dramatic difference between linear and exponential growth.'}
           </p>
         </div>
 
@@ -180,100 +176,47 @@ const PremiumDemo = () => {
           </CardContent>
         </Card>
 
-        {/* Visualization Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="showstopper" className="text-base">
-              🎆 {isGerman ? 'Showstopper' : 'Showstopper'}
-              <span className="premium-badge ml-2">WOW</span>
-            </TabsTrigger>
-            <TabsTrigger value="elegant" className="text-base">
-              ✨ {isGerman ? 'Elegant' : 'Elegant'}
-              <span className="premium-badge ml-2">WOW</span>
-            </TabsTrigger>
-            <TabsTrigger value="explosive" className="text-base">
-              💥 {isGerman ? 'Explosiv' : 'Explosive'}
-              <span className="premium-badge ml-2">WOW</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="showstopper">
-            <CompoundEffectShowstopper
+        {/* Visualization */}
+        <Card className="metallic-frame border-gold/30">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="text-gold" size={20} />
+              {isGerman ? 'Zinseszins-Effekt Visualisierung' : 'Compound Interest Effect Visualization'}
+            </CardTitle>
+            <CardDescription>
+              {isGerman 
+                ? 'Vergleich: Mit Reinvestition vs. Ohne Reinvestition' 
+                : 'Comparison: With Reinvestment vs. Without Reinvestment'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CompoundEffectNivo
               principal={principal}
               rate={rate}
               years={years}
               monthlyContribution={monthlyContribution}
             />
-          </TabsContent>
-
-          <TabsContent value="elegant">
-            <CompoundEffectElegant
-              principal={principal}
-              rate={rate}
-              years={years}
-              monthlyContribution={monthlyContribution}
-            />
-          </TabsContent>
-
-          <TabsContent value="explosive">
-            <CompoundEffectExplosive
-              principal={principal}
-              rate={rate}
-              years={years}
-              monthlyContribution={monthlyContribution}
-            />
-          </TabsContent>
-        </Tabs>
+          </CardContent>
+        </Card>
 
         {/* Info Section */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-8">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">🎆 Showstopper</CardTitle>
+              <CardTitle className="text-lg">
+                {isGerman ? '💫 Über die Visualisierung' : '💫 About the Visualization'}
+              </CardTitle>
             </CardHeader>
             <CardContent className="text-sm">
               <p className="mb-2">
-                {isGerman ? 'Effekte:' : 'Effects:'}
+                {isGerman ? 'Diese Visualisierung nutzt:' : 'This visualization uses:'}
               </p>
               <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>{isGerman ? 'Neon-Glühen mit Puls' : 'Neon glow with pulse'}</li>
-                <li>{isGerman ? 'Konfetti-Explosion' : 'Confetti explosion'}</li>
-                <li>{isGerman ? 'Animierte Zahlen' : 'Animated numbers'}</li>
-                <li>{isGerman ? 'Glasmorphismus' : 'Glassmorphism'}</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">✨ Elegant</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm">
-              <p className="mb-2">
-                {isGerman ? 'Effekte:' : 'Effects:'}
-              </p>
-              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>{isGerman ? 'Flüssigkeits-Anzeige' : 'Liquid fill gauge'}</li>
-                <li>{isGerman ? 'Partikel-Effekt' : 'Particle trail'}</li>
-                <li>{isGerman ? 'Spotlight-Reveal' : 'Spotlight reveal'}</li>
-                <li>{isGerman ? 'Interaktive Partikel' : 'Interactive particles'}</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">💥 Explosive</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm">
-              <p className="mb-2">
-                {isGerman ? 'Effekte:' : 'Effects:'}
-              </p>
-              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>{isGerman ? 'Schockwellen-Animation' : 'Shockwave animation'}</li>
-                <li>{isGerman ? 'Feuerwerk (bei >$10k)' : 'Fireworks (at >$10k)'}</li>
-                <li>{isGerman ? '3D-Balken-Effekt' : '3D bar effect'}</li>
-                <li>{isGerman ? 'Spring-Animationen' : 'Spring animations'}</li>
+                <li>{isGerman ? 'Nivo Line Chart für klare Darstellung' : 'Nivo Line Chart for clear presentation'}</li>
+                <li>{isGerman ? 'Responsive Design für alle Geräte' : 'Responsive design for all devices'}</li>
+                <li>{isGerman ? 'Dark Mode Unterstützung' : 'Dark mode support'}</li>
+                <li>{isGerman ? 'Interaktive Tooltips' : 'Interactive tooltips'}</li>
+                <li>{isGerman ? 'Gold/Metallic CI-Design' : 'Gold/Metallic CI design'}</li>
               </ul>
             </CardContent>
           </Card>
