@@ -13,7 +13,7 @@
 import { ResponsiveLine } from '@nivo/line';
 import { useTranslation } from 'react-i18next';
 import { useSpring, animated } from '@react-spring/web';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import '../styles/compound-effect.css';
 
@@ -44,18 +44,16 @@ const CompoundEffectNivo = ({
   const isGerman = i18n.language === 'de';
 
   const [isVisible, setIsVisible] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
     setIsVisible(true);
-    
-    if (prefersReducedMotion) {
-      // Skip animations - component will still render without animations
-    }
   }, []);
 
-  // Calculate compound interest data (with reinvestment)
-  const generateCompoundData = (): DataPoint[] => {
+  // Calculate compound interest data (with reinvestment) - memoized for performance
+  const generateCompoundData = useMemo((): DataPoint[] => {
     const points: DataPoint[] = [];
     let balance = principal;
     const monthlyRate = rate / 100 / 12;
@@ -69,10 +67,10 @@ const CompoundEffectNivo = ({
     }
 
     return points;
-  };
+  }, [principal, rate, years, monthlyContribution]);
 
-  // Calculate linear data (without reinvestment)
-  const generateLinearData = (): DataPoint[] => {
+  // Calculate linear data (without reinvestment) - memoized for performance
+  const generateLinearData = useMemo((): DataPoint[] => {
     const points: DataPoint[] = [];
     const monthlyProfit = principal * (rate / 100 / 12);
     const totalMonths = years * 12;
@@ -85,38 +83,36 @@ const CompoundEffectNivo = ({
     }
 
     return points;
-  };
+  }, [principal, rate, years, monthlyContribution]);
 
   const data: ChartData[] = [
     {
       id: isGerman ? 'Mit Reinvestition' : 'With Reinvestment',
-      data: generateCompoundData(),
+      data: generateCompoundData,
     },
     {
       id: isGerman ? 'Ohne Reinvestition' : 'Without Reinvestment',
-      data: generateLinearData(),
+      data: generateLinearData,
     },
   ];
 
   // Calculate final values for stats
-  const compoundData = generateCompoundData();
-  const linearData = generateLinearData();
-  const compoundFinal = compoundData[compoundData.length - 1].y;
-  const linearFinal = linearData[linearData.length - 1].y;
+  const compoundFinal = generateCompoundData[generateCompoundData.length - 1].y;
+  const linearFinal = generateLinearData[generateLinearData.length - 1].y;
   const difference = compoundFinal - linearFinal;
   const percentageGain = ((difference / linearFinal) * 100).toFixed(1);
 
-  // Animated Counter
+  // Animated Counter - respects reduced motion preference
   const { number } = useSpring({
-    number: isVisible ? difference : 0,
-    from: { number: 0 },
-    config: { tension: 20, friction: 10, duration: 1500 }
+    number: isVisible && !prefersReducedMotion ? difference : difference,
+    from: { number: prefersReducedMotion ? difference : 0 },
+    config: { tension: 20, friction: 10, duration: prefersReducedMotion ? 0 : 1500 }
   });
 
   // Mobile optimization
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-  const motionConfig = isMobile ? "default" : {
+  const motionConfig = isMobile || prefersReducedMotion ? "default" : {
     mass: 1,
     tension: 170,
     friction: 26,
@@ -169,14 +165,14 @@ const CompoundEffectNivo = ({
 
       {/* Chart with reveal animation and glow effect */}
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={prefersReducedMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ 
-          duration: 0.8,
+          duration: prefersReducedMotion ? 0 : 0.8,
           ease: "easeOut"
         }}
         style={{ height: '400px', width: '100%' }}
-        className="compound-line-glow"
+        className={prefersReducedMotion ? '' : 'compound-line-glow'}
       >
         <ResponsiveLine
           data={data}
